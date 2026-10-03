@@ -1,26 +1,306 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Aubade design tokens. High-end agency direction: warm ink and paper,
+ * one brass signal colour (it only ever means "act"), Bodoni display over Jost.
+ * The site is one fixed, deliberate palette, so there is no dark/light switch.
+ */
+@theme {
+  --color-ink: #0d0b09;
+  --color-ink-2: #15120e;
+  --color-ink-3: #1f1a14;
+  --color-paper: #f3ede3;
+  --color-paper-2: #e8e0d2;
+  --color-mist: #b8afa2; /* muted text on ink, 8.9:1 */
+  --color-stone: #5f574d; /* muted text on paper, 6.1:1 */
+  --color-brass: #c9a46a; /* signal: buttons, focus, active state */
+  --color-brass-light: #dcbd88;
+  --color-brass-ink: #7a5c30; /* brass text on paper, 5.2:1 */
+  --color-line: rgb(243 237 227 / 0.14);
+  --color-line-dark: rgb(13 11 9 / 0.14);
+
+  --font-display: var(--font-bodoni), "Bodoni 72", Didot, serif;
+  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p,
+  dd,
+  li {
+    text-wrap: pretty;
+  }
+
+  /* Big type must never widen a grid track and shove its neighbours off-screen. */
+  :where(.grid, .flex) > * {
+    min-width: 0;
+  }
+
+  ::selection {
+    background: var(--color-brass);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  button,
+  [role="button"],
+  summary,
+  label[for],
+  a {
+    cursor: pointer;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Tiny uppercase label: the "rest" of the type scale next to the huge Bodoni. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    line-height: 0.9;
+    /*
+     * Pinned optical size. "auto" picks Bodoni's 96pt master at display sizes, whose hairlines
+     * are thinner than a device pixel and break up on screen. 20 keeps the contrast, solid strokes.
+     */
+    font-optical-sizing: none;
+    font-variation-settings: "opsz" 20;
+  }
+
+  /*
+   * Type scale: hero, section, one small display size, then body (1rem), small (0.875rem)
+   * and the 11px eyebrow. No in-between sizes: one thing huge, the rest quiet.
+   */
+  .t-hero {
+    font-size: clamp(3.4rem, 10.4vw, 11.75rem);
+  }
+  .t-section {
+    font-size: clamp(2.75rem, 6.2vw, 6.75rem);
+  }
+  /* Sized by its own column (container query units), so a long figure like "4,000 K" always fits. */
+  .t-stat {
+    font-size: clamp(3rem, 24cqi, 7.5rem);
+  }
+  .t-display-sm {
+    font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+    line-height: 1.04;
+    /* Smaller size, sturdier master, so hairlines stay a full device pixel or more. */
+    font-variation-settings: "opsz" 11;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  .btn-brass {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3rem;
+    padding: 0 1.5rem;
+    border-radius: 999px;
+    background: var(--color-brass);
+    color: var(--color-ink);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition:
+      background-color 300ms var(--ease-out-expo),
+      transform 300ms var(--ease-out-expo);
+  }
+  .btn-brass:hover {
+    background: var(--color-brass-light);
+  }
+  .btn-brass:active {
+    transform: scale(0.97);
+  }
+  .btn-brass .arrow {
+    transition: transform 400ms var(--ease-out-expo);
+  }
+  .btn-brass:hover .arrow {
+    transform: translateX(4px);
+  }
+  .btn-brass:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .link-quiet {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 3rem;
+    gap: 0.6rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .link-quiet::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.7rem;
+    height: 1px;
+    background: currentColor;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform 500ms var(--ease-out-expo);
+  }
+  .link-quiet:hover::after,
+  .link-quiet:focus-visible::after {
+    transform-origin: left;
+    transform: scaleX(1);
+  }
+
+  .field-input {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0 1rem;
+    border-radius: 0.875rem;
+    border: 1px solid var(--color-line);
+    background: rgb(243 237 227 / 0.04);
+    color: var(--color-paper);
+    font-size: 1rem;
+    transition:
+      border-color 250ms var(--ease-out-expo),
+      background-color 250ms var(--ease-out-expo);
+  }
+  .field-input:hover {
+    border-color: rgb(243 237 227 / 0.3);
+  }
+  .field-input[aria-invalid="true"] {
+    border-color: #f0a58a;
+  }
+  /* After the invalid rule, so focus always wins and the user sees where they are. */
+  .field-input:focus-visible,
+  .field-input:focus {
+    outline: none;
+    border-color: var(--color-brass);
+    background: rgb(243 237 227 / 0.07);
+  }
+  select.field-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='m1 1.5 5 5 5-5' stroke='%23b8afa2' stroke-width='1.25'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+  }
+
+  .reserve-dialog[open] {
+    animation: dialog-in 600ms var(--ease-out-expo);
+  }
+  .reserve-dialog[open]::backdrop {
+    animation: backdrop-in 600ms var(--ease-out-expo);
+  }
+
+}
+
+/* Star field for the night sky: layered tiles of tiny radial dots at co-prime sizes, so it never visibly repeats. */
+.stars {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgb(255 255 255 / 0.9), transparent),
+    radial-gradient(1px 1px at 140px 80px, rgb(255 255 255 / 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 90px 160px, rgb(255 244 220 / 0.85), transparent),
+    radial-gradient(1px 1px at 230px 210px, rgb(255 255 255 / 0.6), transparent),
+    radial-gradient(1px 1px at 310px 40px, rgb(255 255 255 / 0.75), transparent),
+    radial-gradient(1.5px 1.5px at 400px 130px, rgb(220 230 255 / 0.8), transparent);
+  background-size:
+    331px 331px,
+    277px 277px,
+    419px 419px,
+    373px 373px,
+    467px 467px,
+    523px 523px;
+  mask-image: linear-gradient(to bottom, black 0%, black 45%, transparent 75%);
+}
+
+/* Feathered edges: the halo and floor glow extend past the frame, and a hard canvas edge reads as a box. */
+.lamp-canvas--feather {
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.caption-in {
+  animation: caption-in 900ms var(--ease-out-expo) both;
+}
+@keyframes caption-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* If scripts fail, the opening curtain still clears itself. */
+.intro-fallback {
+  animation: intro-clear 0s linear 5s forwards;
+}
+@keyframes intro-clear {
+  to {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-fallback {
+    display: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

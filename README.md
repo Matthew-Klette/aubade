@@ -1,5 +1,7 @@
 # Aubade
 
+[![CI](https://github.com/Matthew-Klette/aubade/actions/workflows/ci.yml/badge.svg)](https://github.com/Matthew-Klette/aubade/actions/workflows/ci.yml)
+
 **Light that keeps time with the sun.** A concept product site for a circadian lamp that reproduces the colour and intensity of the daylight outside your window, minute by minute.
 
 Portfolio piece #1 by Matt Klette. The product is fictional; the frontend is real.

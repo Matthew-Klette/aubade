@@ -63,6 +63,11 @@ const GLASS_WHITE = new THREE.Color("#fbf6ee");
 const WHITE_HOT = new THREE.Color("#fff8ee");
 /** How strongly the globe's surface is tinted by its light (0 = white glass). */
 const GLASS_TINT = 0.18;
+/** Linear luminance where a near-white light starts to clip the globe to a flat disc, and where the hold-back peaks. */
+const WHITE_CLIP_FROM = 0.72;
+const WHITE_CLIP_TO = 0.95;
+/** How much of the top end a pure white light gives back, so the noon globe keeps its shading. */
+const WHITE_HOLD_BACK = 0.4;
 
 function createMaterials(options: LampSceneOptions) {
   const metal = new THREE.MeshStandardMaterial({ metalness: 1, ...FINISH_MATERIALS[options.finish] });
@@ -199,19 +204,23 @@ export function createLampScene(canvas: HTMLCanvasElement, options: LampSceneOpt
 
   const applyLight = () => {
     const i = current.intensity;
+    // Warm light has channels to spare; near-white light clips every channel at once. Only the latter is held back.
+    const { r, g, b } = current.color;
+    const whiteness = THREE.MathUtils.smoothstep(0.2126 * r + 0.7152 * g + 0.0722 * b, WHITE_CLIP_FROM, WHITE_CLIP_TO);
+    const hold = 1 - WHITE_HOLD_BACK * whiteness * i;
     // Opal glass takes on the colour of the light inside it.
     // Unlit opal is grey-white; as the light dims the glass darkens toward an ember.
-    materials.glass.color.copy(GLASS_WHITE).lerp(current.color, GLASS_TINT).multiplyScalar(0.3 + 0.7 * i);
+    materials.glass.color.copy(GLASS_WHITE).lerp(current.color, GLASS_TINT).multiplyScalar((0.3 + 0.7 * i) * hold);
     materials.glass.emissive.copy(current.color);
     // Dim surface glow plus a hot core seen through frosted glass: bright centre, richer edges.
-    materials.glass.emissiveIntensity = 0.16 + 0.36 * i;
-    materials.core.color.copy(current.color).multiplyScalar(1.2 + 1.4 * i);
+    materials.glass.emissiveIntensity = (0.16 + 0.28 * i) * hold;
+    materials.core.color.copy(current.color).multiplyScalar((1.2 + 0.95 * i) * hold);
     bulb.color.copy(current.color);
-    bulb.intensity = (3 + 34 * i) * scale * scale;
+    bulb.intensity = (3 + 26 * i) * scale * scale;
     halo.material.color.copy(current.color);
     halo.material.opacity = 0.45 + 0.45 * i;
     innerGlow.material.color.copy(hotColor.copy(current.color).lerp(WHITE_HOT, 0.35));
-    innerGlow.material.opacity = 0.5 + 0.25 * i;
+    innerGlow.material.opacity = (0.5 + 0.25 * i) * hold;
     pool.material.color.copy(current.color);
     pool.material.opacity = 0.12 + 0.3 * i;
   };

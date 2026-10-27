@@ -176,6 +176,15 @@ export function hourFromDate(date: Date): number {
   return date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
 }
 
+/** A little past the boundary, so a timer that fires early by a few ms still lands in the new minute. */
+const MINUTE_MARGIN_MS = 50;
+
+/** Milliseconds from `nowMs` until just after the next local minute boundary. */
+export function msUntilNextMinute(nowMs: number): number {
+  const now = new Date(nowMs);
+  return 60_000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + MINUTE_MARGIN_MS;
+}
+
 export const formatNumber = (value: number) => Math.round(value).toLocaleString("en-US");
 
 /** Kelvin rounded to the nearest 50, the way a spec sheet prints it. */

@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Phones on their side: wide enough for two columns, too short to stack the lamp over the copy. Stops at lg, which has its own layout. */
+@custom-variant short-land (@media (width >= 40rem) and (width < 64rem) and (height <= 33.75rem) and (orientation: landscape));
+/* Tablets: md width with real height. Never overlaps short-land, and stops at lg like it. */
+@custom-variant tablet (@media (width >= 48rem) and (width < 64rem) and (height > 33.75rem));
+
 /*
  * Aubade design tokens. High-end agency direction: warm ink and paper,
  * one brass signal colour (it only ever means "act"), Bodoni display over Jost.
@@ -11,13 +16,19 @@
   --color-ink-3: #1f1a14;
   --color-paper: #f3ede3;
   --color-paper-2: #e8e0d2;
-  --color-mist: #b8afa2; /* muted text on ink, 8.9:1 */
-  --color-stone: #5f574d; /* muted text on paper, 6.1:1 */
+  --color-mist: #cbc3b7; /* muted text on ink, 11.3:1 */
+  --color-stone: #4d463e; /* muted text on paper, 8.0:1 */
   --color-brass: #c9a46a; /* signal: buttons, focus, active state */
   --color-brass-light: #dcbd88;
   --color-brass-ink: #7a5c30; /* brass text on paper, 5.2:1 */
   --color-line: rgb(243 237 227 / 0.14);
   --color-line-dark: rgb(13 11 9 / 0.14);
+
+  /* Body 18px on phones up to 20px on desktops; small text 16px. Sized for readers who hold the phone at arm's length. */
+  --text-base: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);
+  --text-base--line-height: 1.6;
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.55;
 
   --font-display: var(--font-bodoni), "Bodoni 72", Didot, serif;
   --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
@@ -36,7 +47,8 @@
     background: var(--color-ink);
     color: var(--color-paper);
     font-family: var(--font-sans);
-    font-weight: 400;
+    /* Jost's 400 is thin on dark grounds; a touch heavier keeps the long copy solid. */
+    font-weight: 430;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -82,9 +94,9 @@
   /* Tiny uppercase label: the "rest" of the type scale next to the huge Bodoni. */
   .eyebrow {
     font-family: var(--font-sans);
-    font-size: 0.6875rem;
+    font-size: 0.875rem;
     font-weight: 500;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
@@ -102,11 +114,12 @@
   }
 
   /*
-   * Type scale: hero, section, one small display size, then body (1rem), small (0.875rem)
-   * and the 11px eyebrow. No in-between sizes: one thing huge, the rest quiet.
+   * Type scale: hero, section, one small display size, then body (18-20px), small (16px)
+   * and the 14px eyebrow. No in-between sizes: one thing huge, the rest quiet.
    */
+  /* Capped by height too, so a short laptop or a phone on its side still shows the call to action. */
   .t-hero {
-    font-size: clamp(3.4rem, 10.4vw, 11.75rem);
+    font-size: clamp(3.4rem, min(10.4vw, 14.5svh), 11.75rem);
   }
   .t-section {
     font-size: clamp(2.75rem, 6.2vw, 6.75rem);
@@ -120,6 +133,10 @@
     line-height: 1.04;
     /* Smaller size, sturdier master, so hairlines stay a full device pixel or more. */
     font-variation-settings: "opsz" 11;
+  }
+  /* After .t-display-sm so it wins. The day readouts: small display size, shrunk by its own column so "1,900 K" never wraps on a 320 px phone. */
+  .t-readout {
+    font-size: min(clamp(1.75rem, 2.6vw, 2.5rem), 26cqi);
   }
 
   .tabular {
@@ -135,7 +152,7 @@
     border-radius: 999px;
     background: var(--color-brass);
     color: var(--color-ink);
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -166,7 +183,7 @@
     align-items: center;
     min-height: 3rem;
     gap: 0.6rem;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }

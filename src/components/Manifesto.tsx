@@ -21,14 +21,15 @@ export function Manifesto() {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Unlit words still clear 3:1 on paper, so a paused or half-scrolled frame reads as text, not a ghost.
         gsap.fromTo(
           ".manifesto-word",
-          { opacity: 0.12 },
+          { opacity: 0.45 },
           {
             opacity: 1,
             ease: "none",
             stagger: 0.05,
-            scrollTrigger: { trigger: ".manifesto-statement", start: "top 78%", end: "bottom 42%", scrub: true },
+            scrollTrigger: { trigger: ".manifesto-statement", start: "top 88%", end: "bottom 70%", scrub: true },
           },
         );
 
@@ -61,7 +62,7 @@ export function Manifesto() {
 
   return (
     <section ref={rootRef} aria-labelledby="manifesto-title" className="relative bg-paper text-ink">
-      <div className="mx-auto max-w-[1600px] px-5 py-28 sm:px-8 lg:px-12 lg:py-44">
+      <div className="mx-auto max-w-[1600px] px-5 py-20 sm:px-8 sm:py-28 short-land:py-16 lg:px-12 lg:py-44">
         <p className="eyebrow text-stone">01 · Why</p>
         <h2 id="manifesto-title" className="manifesto-statement display mt-8 max-w-[22ch] t-section leading-[1.02]">
           {words(STATEMENT).map((word, i) => (
@@ -78,7 +79,7 @@ export function Manifesto() {
           </em>
         </h2>
 
-        <dl className="stats mt-24 grid grid-cols-1 gap-x-10 gap-y-12 md:grid-cols-3 lg:mt-36">
+        <dl className="stats mt-16 grid grid-cols-1 gap-x-10 gap-y-12 sm:mt-24 sm:grid-cols-3 sm:gap-x-6 lg:mt-36 lg:gap-x-10">
           {STATS.map((stat) => (
             <div key={stat.label} className="stat @container min-w-0 border-t border-line-dark pt-6">
               <dt className="sr-only">

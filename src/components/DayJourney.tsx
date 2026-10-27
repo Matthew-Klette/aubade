@@ -20,7 +20,7 @@ import { LampCanvas, type LampHandle } from "./LampCanvas";
 const START_HOUR = 4.5;
 const END_HOUR = 23.5;
 /** Scroll distance of the pinned day, in viewport heights. */
-const SCROLL_VIEWPORTS = 5;
+const SCROLL_VIEWPORTS = 3;
 const RULER_HOURS = Array.from({ length: 19 }, (_, i) => i + 5);
 
 // Sun arc geometry inside the SVG viewBox (0 0 1000 260). Kept in the upper third, clear of the copy.
@@ -195,8 +195,9 @@ export function DayJourney() {
           </g>
         </svg>
 
-        <div className="relative mx-auto grid h-full max-w-[1600px] grid-cols-1 grid-rows-[1fr_auto] px-5 pt-24 pb-6 sm:px-8 lg:grid-cols-12 lg:px-12 lg:pb-10">
-          <div className="z-10 flex flex-col justify-end lg:col-span-7 lg:pb-6">
+        {/* Phones stack lamp, copy and readouts in their own rows so the lamp shrinks instead of covering the clock. */}
+        <div className="relative mx-auto grid h-full max-w-[1600px] grid-cols-1 grid-rows-[minmax(0,1fr)_auto_auto] px-5 pt-24 pb-6 sm:px-8 short-land:grid-cols-12 short-land:grid-rows-[minmax(0,1fr)_auto] short-land:gap-x-8 short-land:pt-20 short-land:pb-4 lg:grid-cols-12 lg:grid-rows-[minmax(0,1fr)_auto] lg:px-12 lg:pb-10">
+          <div className="z-10 row-start-2 flex flex-col justify-end short-land:col-span-6 short-land:row-span-2 short-land:row-start-1 lg:col-span-7 lg:row-start-1 lg:pb-6">
             <p className="eyebrow text-[var(--fg-muted)]">02 · A day, in light</p>
             <h2 id="day-title" className="sr-only">
               How Aubade follows a day, from blue hour to night
@@ -204,15 +205,15 @@ export function DayJourney() {
             <p aria-live="polite" className="display mt-5 t-display-sm italic">
               {PHASES[phase].label}
             </p>
-            <p className="display tabular -ml-[0.04em] text-[clamp(5.5rem,17vw,17.5rem)] leading-[0.82]" aria-hidden="true">
+            <p className="display tabular mt-[0.1em] -ml-[0.04em] text-[clamp(min(5.5rem,14svh),min(17vw,27svh),17.5rem)] leading-[0.82]" aria-hidden="true">
               <span ref={clockRef}>{formatClock(START_HOUR)}</span>
             </p>
-            <p key={phase} className="caption-in mt-6 max-w-[27rem] text-base leading-relaxed text-[var(--fg-muted)]">
+            <p key={phase} className="caption-in mt-6 max-w-[27rem] text-base leading-relaxed text-[var(--fg-muted)] short-land:mt-3">
               {PHASES[phase].caption}
             </p>
           </div>
 
-          <div className="pointer-events-none absolute inset-x-0 top-[9%] bottom-[44%] lg:static lg:col-span-5 lg:pt-10 lg:pb-6">
+          <div className="pointer-events-none row-start-1 -mx-5 min-h-0 sm:-mx-8 short-land:col-span-6 short-land:mx-0 lg:col-span-5 lg:mx-0 lg:pt-10 lg:pb-6">
             <LampCanvas
               ref={lampRef}
               label="The lamp, its globe changing colour and brightness with the time of day."
@@ -222,14 +223,14 @@ export function DayJourney() {
             />
           </div>
 
-          <div className="z-10 text-[var(--fg-low)] lg:col-span-12">
-            <dl className="mt-8 grid grid-cols-3 gap-4 border-t border-[var(--fg-low-line)] pt-4 sm:gap-8 lg:mt-0">
+          <div className="z-10 row-start-3 text-[var(--fg-low)] short-land:col-span-6 short-land:col-start-7 short-land:row-start-2 lg:col-span-12 lg:row-start-2">
+            <dl className="mt-8 grid grid-cols-3 gap-3 border-t border-[var(--fg-low-line)] pt-4 sm:gap-8 short-land:mt-4 short-land:pt-3 lg:mt-0">
               <Readout label="Colour temperature" short="Colour" valueRef={kelvinRef} initial={formatKelvin(INITIAL.kelvin)} />
               <Readout label="Illuminance" short="Light" valueRef={luxRef} initial={`${formatNumber(INITIAL.lux)} lx`} />
               <Readout label="Melanopic ratio" short="Melanopic" valueRef={melanopicRef} initial={INITIAL.melanopic.toFixed(2)} />
             </dl>
 
-            <div className="relative mt-5 hidden h-8 sm:block" aria-hidden="true">
+            <div className="relative mt-5 hidden h-8 sm:block short-land:hidden" aria-hidden="true">
               {RULER_HOURS.map((h) => (
                 <span
                   key={h}
@@ -271,7 +272,7 @@ export function DayJourney() {
 
 type ReadoutProps = {
   label: string;
-  /** Single-word label for phones, so the three values stay on one baseline. */
+  /** Single-word label for phones (and phones on their side), so the three values stay on one baseline. */
   short: string;
   valueRef: RefObject<HTMLSpanElement | null>;
   initial: string;
@@ -279,14 +280,14 @@ type ReadoutProps = {
 
 function Readout({ label, short, valueRef, initial }: ReadoutProps) {
   return (
-    <div>
+    <div className="@container">
       <dt className="eyebrow text-[var(--fg-low-muted)]">
-        <span className="sm:hidden" aria-hidden="true">
+        <span className="sm:hidden short-land:inline" aria-hidden="true">
           {short}
         </span>
-        <span className="max-sm:sr-only">{label}</span>
+        <span className="max-sm:sr-only short-land:sr-only">{label}</span>
       </dt>
-      <dd className="display tabular mt-1.5 t-display-sm">
+      <dd className="display tabular mt-1.5 t-display-sm t-readout whitespace-nowrap">
         <span ref={valueRef}>{initial}</span>
       </dd>
     </div>

@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import { gsap, useGSAP, EASE_OUT } from "@/lib/gsap";
 import { KEYFRAMES } from "@/lib/daylight";
+import { CREDIT_NAME } from "@/lib/credit";
+import { CreditLinks } from "./CreditLinks";
 import { ArrowRight, Plus } from "./Icons";
 
 const SPEC_GROUPS = [
@@ -95,7 +97,7 @@ export function Closing() {
   return (
     <div ref={rootRef}>
       <section id="specifications" aria-labelledby="specs-title" className="bg-ink">
-        <div className="mx-auto max-w-[1600px] px-5 py-28 sm:px-8 lg:px-12 lg:py-40">
+        <div className="mx-auto max-w-[1600px] px-5 py-20 sm:px-8 sm:py-28 short-land:py-16 lg:px-12 lg:py-40">
           <div className="closing-reveal">
             <p className="eyebrow text-mist">05 · Specifications</p>
             <h2 id="specs-title" className="display mt-8 t-section">
@@ -109,9 +111,10 @@ export function Closing() {
                 <h3 className="eyebrow text-paper">{group.title}</h3>
                 <dl className="mt-6">
                   {group.rows.map(([term, detail]) => (
-                    <div key={term} className="flex justify-between gap-6 border-t border-line py-4">
-                      <dt className="text-sm text-mist">{term}</dt>
-                      <dd className="text-right text-sm">{detail}</dd>
+                    // Phones stack the value under its label: a right-aligned value that wraps reads as ragged.
+                    <div key={term} className="flex flex-col gap-1 border-t border-line py-4 sm:flex-row sm:justify-between sm:gap-6">
+                      <dt className="shrink-0 text-sm text-mist">{term}</dt>
+                      <dd className="text-sm sm:text-right">{detail}</dd>
                     </div>
                   ))}
                 </dl>
@@ -119,7 +122,7 @@ export function Closing() {
             ))}
           </div>
 
-          <div className="mt-28 grid gap-10 lg:mt-40 lg:grid-cols-12">
+          <div className="mt-28 grid gap-10 short-land:mt-16 lg:mt-40 lg:grid-cols-12">
             <div className="closing-reveal lg:col-span-4">
               <h2 className="display t-display-sm leading-[1.02]">
                 Questions, <em>answered.</em>
@@ -144,13 +147,13 @@ export function Closing() {
         {/* The sun, half below the horizon. It sets as you scroll to the end of the page. */}
         <div
           aria-hidden="true"
-          className="setting-sun pointer-events-none absolute right-[10%] -bottom-[22vw] aspect-square w-[44vw] rounded-full"
+          className="setting-sun pointer-events-none absolute right-[10%] -bottom-[22vw] aspect-square w-[44vw] rounded-full short-land:right-[-4%] short-land:-bottom-[20vw] short-land:w-[32vw]"
           style={{
             background: "radial-gradient(circle at 50% 40%, #fff1d6 0%, #ffd29a 30%, #f6a25f 62%, #e8794a 100%)",
             boxShadow: "0 0 120px 40px rgb(246 162 95 / 0.35), 0 0 320px 120px rgb(242 136 74 / 0.18)",
           }}
         />
-        <div className="relative mx-auto flex min-h-[100svh] max-w-[1600px] flex-col items-start px-5 pt-36 pb-24 sm:px-8 lg:px-12 lg:pt-44">
+        <div className="relative mx-auto flex min-h-[100svh] max-w-[1600px] flex-col items-start px-5 pt-24 pb-24 sm:px-8 sm:pt-36 short-land:pt-24 short-land:pb-12 lg:px-12 lg:pt-44">
           <p className="closing-reveal eyebrow text-paper/85">Edition One · 500 numbered pieces</p>
           <h2 id="cta-title" className="closing-reveal display mt-8 max-w-[14ch] t-hero">
             Let the evening <em>arrive slowly.</em>
@@ -159,18 +162,21 @@ export function Closing() {
             <a href="#configure" className="btn-brass">
               Reserve yours <ArrowRight />
             </a>
-            <p className="text-sm text-paper">From $2,400 · Ships spring 2027</p>
+            <p className="text-sm text-paper [text-shadow:0_1px_14px_rgb(13_11_9/0.55)]">From $2,400 · Ships spring 2027</p>
           </div>
         </div>
       </section>
 
       <footer className="overflow-hidden bg-ink">
-        <div className="mx-auto max-w-[1600px] px-5 pt-20 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-[1600px] px-5 pt-14 sm:px-8 sm:pt-20 lg:px-12">
           <div className="grid gap-10 border-b border-line pb-14 md:grid-cols-3">
-            <p className="max-w-[22rem] text-sm leading-relaxed text-mist">
-              Aubade is a concept product, designed and built by Matt Klette as a frontend portfolio piece. Nothing here is for
-              sale.
-            </p>
+            <div className="max-w-[22rem]">
+              <p className="text-sm leading-relaxed text-mist">
+                Aubade is a concept product, designed and built by {CREDIT_NAME} as a frontend portfolio piece. Nothing here is
+                for sale.
+              </p>
+              <CreditLinks className="mt-4" variant="pill" />
+            </div>
             <nav aria-label="Footer">
               <ul className="flex flex-col gap-1">
                 {[
@@ -180,7 +186,7 @@ export function Closing() {
                   ["#top", "Back to the top"],
                 ].map(([href, label]) => (
                   <li key={href}>
-                    <a href={href} className="link-quiet !min-h-10 text-paper">
+                    <a href={href} className="link-quiet !min-h-11 text-paper">
                       {label}
                     </a>
                   </li>

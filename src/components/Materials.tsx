@@ -32,7 +32,7 @@ export function Materials() {
 
   return (
     <section ref={rootRef} id="object" aria-labelledby="object-title" className="bg-ink">
-      <div className="mx-auto max-w-[1600px] px-5 py-28 sm:px-8 lg:px-12 lg:py-44">
+      <div className="mx-auto max-w-[1600px] px-5 py-20 sm:px-8 sm:py-28 short-land:py-16 lg:px-12 lg:py-44">
         <div className="reveal grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
             <p className="eyebrow text-mist">03 · The object</p>
@@ -48,9 +48,9 @@ export function Materials() {
           </p>
         </div>
 
-        <div className="mt-20 grid gap-4 lg:mt-28 lg:grid-cols-12 lg:grid-rows-2">
+        <div className="mt-20 grid gap-4 md:grid-cols-2 lg:mt-28 lg:grid-cols-12 lg:grid-rows-2">
           <MaterialCard
-            className="lg:col-span-7 lg:row-span-2"
+            className="md:col-span-2 lg:col-span-7 lg:row-span-2"
             index="i"
             title="Mouth-blown opal glass"
             body="Each globe is blown by hand and cased in a layer of opal, so the light has no source you can find, only a glowing volume. No two are quite the same."

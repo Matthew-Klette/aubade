@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { contrastRatio, hexToRgb, mixHex, rgbToHex } from "./color";
-import { KEYFRAMES, formatClock, formatKelvin, sampleDay, sunPosition, wrapHour } from "./daylight";
+import { KEYFRAMES, formatClock, formatKelvin, msUntilNextMinute, sampleDay, sunPosition, wrapHour } from "./daylight";
 import { normalisedSpectrum, spectrumPath } from "./spectrum";
 import { BASE_PRICE, DEFAULT_CONFIGURATION, priceOf } from "./catalog";
 import { editionNumber, hasErrors, validateReservation } from "./reserve";
@@ -97,5 +97,18 @@ describe("reserve", () => {
   it("gives the same edition number for the same email regardless of case", () => {
     expect(editionNumber("Ada@Example.com")).toBe(editionNumber("ada@example.com"));
     expect(editionNumber("ada@example.com")).toMatch(/^\d{3}$/);
+  });
+});
+
+describe("msUntilNextMinute", () => {
+  const at = (minute: number, second: number, ms = 0) => new Date(2026, 9, 27, 15, minute, second, ms).getTime();
+
+  it("waits for the next minute boundary, plus a small margin", () => {
+    expect(msUntilNextMinute(at(41, 30))).toBe(30_050);
+    expect(msUntilNextMinute(at(41, 59, 990))).toBe(60);
+  });
+
+  it("waits a full minute when called exactly on a boundary", () => {
+    expect(msUntilNextMinute(at(42, 0))).toBe(60_050);
   });
 });

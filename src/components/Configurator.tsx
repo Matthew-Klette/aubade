@@ -56,8 +56,8 @@ export function Configurator() {
 
   return (
     <section id="configure" aria-labelledby="configure-title" className="bg-paper text-ink">
-      <div className="mx-auto grid max-w-[1600px] gap-12 px-5 py-28 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:px-12 lg:py-40">
-        <div className="relative h-[62svh] min-h-[28rem] overflow-hidden rounded-[2rem] bg-[radial-gradient(90%_70%_at_50%_30%,#f6f1e8_0%,#e3d9c8_60%,#d4c7b1_100%)] lg:sticky lg:top-24 lg:col-span-7 lg:h-[calc(100svh-8rem)]">
+      <div className="mx-auto grid max-w-[1600px] gap-12 px-5 py-20 sm:px-8 sm:py-28 short-land:py-16 lg:grid-cols-12 lg:gap-16 lg:px-12 lg:py-40">
+        <div className="relative h-[62svh] min-h-[28rem] overflow-hidden short-land:h-[calc(100svh-6rem)] short-land:min-h-0 rounded-[2rem] bg-[radial-gradient(90%_70%_at_50%_30%,#f6f1e8_0%,#e3d9c8_60%,#d4c7b1_100%)] lg:sticky lg:top-24 lg:col-span-7 lg:h-[calc(100svh-8rem)]">
           <LampCanvas
             label={`Preview of your configuration: ${describeConfiguration(config)}.`}
             light={PREVIEW_LIGHT}
@@ -70,7 +70,8 @@ export function Configurator() {
           />
           <p className="eyebrow absolute top-6 left-6 text-stone">Edition One · {EDITION_SIZE} pieces</p>
           <p className="eyebrow absolute bottom-6 left-6 text-stone">{getSize(config.size).dimensions}</p>
-          <p className="eyebrow absolute right-6 bottom-6 hidden text-stone sm:block">Move your cursor to turn it</p>
+          {/* Only a mouse turns it; touch screens scroll instead, so they never see the hint. */}
+          <p className="eyebrow absolute right-6 bottom-6 hidden text-stone sm:pointer-fine:block">Move your cursor to turn it</p>
         </div>
 
         <div className="lg:col-span-5 lg:py-6">
@@ -197,7 +198,7 @@ function SizeGroup({ value, onChange }: { value: Configuration["size"]; onChange
               onChange={() => onChange(size.id)}
               className="sr-only"
             />
-            <span className="flex items-baseline justify-between">
+            <span className="flex flex-wrap items-baseline justify-between gap-x-3">
               <span className="display t-display-sm">{size.name}</span>
               <span className="text-sm text-stone">{surcharge(size.price)}</span>
             </span>

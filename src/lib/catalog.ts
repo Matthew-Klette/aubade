@@ -26,8 +26,8 @@ export const BASES: readonly Option<BaseId>[] = [
 ];
 
 export const SIZES: readonly (Option<SizeId> & { readonly dimensions: string })[] = [
-  { id: "petite", name: "Petite", note: "Bedside, reading chair.", dimensions: "Ø 28 cm globe · H 46 cm", swatch: "", price: 0 },
-  { id: "grand", name: "Grand", note: "Living room, studio, desk.", dimensions: "Ø 40 cm globe · H 64 cm", swatch: "", price: 900 },
+  { id: "petite", name: "Petite", note: "Bedside, reading chair.", dimensions: "Ø\u00a028\u00a0cm globe · H\u00a046\u00a0cm", swatch: "", price: 0 },
+  { id: "grand", name: "Grand", note: "Living room, studio, desk.", dimensions: "Ø\u00a040\u00a0cm globe · H\u00a064\u00a0cm", swatch: "", price: 900 },
 ];
 
 export const BASE_PRICE = 2400;

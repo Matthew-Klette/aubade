@@ -33,3 +33,11 @@ export function Close({ className = "" }: IconProps) {
     </svg>
   );
 }
+
+export function Menu({ className = "" }: IconProps) {
+  return (
+    <svg className={`h-3 w-4 ${className}`} viewBox="0 0 16 12" fill="none" aria-hidden="true">
+      <path d="M0 3.5h16M0 8.5h16" stroke="currentColor" strokeWidth="1.25" />
+    </svg>
+  );
+}

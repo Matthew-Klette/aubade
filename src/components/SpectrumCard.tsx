@@ -55,7 +55,7 @@ export function SpectrumCard() {
           Eleven LED channels blend into the shape of real daylight, from ember to blue-white noon. Colour rendering stays at
           CRI 98 across the whole day, so skin and wood look like themselves.
         </p>
-        <div role="group" aria-label="Moment of the day" className="mt-8 flex flex-wrap gap-2">
+        <div role="group" aria-label="Moment of the day" className="mt-8 grid max-w-[24rem] grid-cols-2 gap-2">
           {PRESETS.map((preset) => (
             <button
               key={preset.id}
@@ -121,9 +121,11 @@ export function SpectrumCard() {
           </p>
         </div>
         <figcaption className="mt-3 flex justify-between">
-          {AXIS_LABELS.map((nm) => (
-            <span key={nm} className="eyebrow tabular text-mist">
-              {nm} nm
+          {/* Phones keep the unit on the last label only, so each label stays on one line. */}
+          {AXIS_LABELS.map((nm, i) => (
+            <span key={nm} className="eyebrow tabular whitespace-nowrap text-mist">
+              {nm}
+              <span className={i < AXIS_LABELS.length - 1 ? "max-sm:hidden" : undefined}> nm</span>
             </span>
           ))}
         </figcaption>

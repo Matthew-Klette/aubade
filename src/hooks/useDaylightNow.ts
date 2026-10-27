@@ -1,15 +1,13 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { hourFromDate, sampleDay, type DaySample } from "@/lib/daylight";
+import { hourFromDate, msUntilNextMinute, sampleDay, type DaySample } from "@/lib/daylight";
 
 export type DaylightNow = {
   readonly sample: DaySample;
   /** City from the visitor's time zone ("Africa/Johannesburg" → "Johannesburg"). No geolocation prompt. */
   readonly city: string;
 };
-
-const TICK_MS = 20_000;
 
 let cachedKey = "";
 let cachedValue: DaylightNow | null = null;
@@ -30,9 +28,24 @@ function getSnapshot(): DaylightNow {
   return cachedValue;
 }
 
+// One timer for every clock on the page, fired on the minute, so the header and the hero never disagree.
+const listeners = new Set<() => void>();
+let timer: number | undefined;
+
+function scheduleTick() {
+  timer = window.setTimeout(() => {
+    listeners.forEach((listener) => listener());
+    scheduleTick();
+  }, msUntilNextMinute(Date.now()));
+}
+
 function subscribe(onChange: () => void) {
-  const id = window.setInterval(onChange, TICK_MS);
-  return () => window.clearInterval(id);
+  listeners.add(onChange);
+  if (listeners.size === 1) scheduleTick();
+  return () => {
+    listeners.delete(onChange);
+    if (listeners.size === 0) window.clearTimeout(timer);
+  };
 }
 
 /** Live daylight sample for the visitor's local time; null during server render. */
